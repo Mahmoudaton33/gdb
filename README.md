@@ -33,3 +33,14 @@ inside gdb press
 ```c
 ctr + x then a
 ```
+This enables TUI (Text User Interface) mode, which shows the source code and allows navigation.
+
+## 5. start debugging 
+Run the program from the beginning by writing :
+```c
+start 
+```
+Step through the code line by line:
+```c
+n
+```
