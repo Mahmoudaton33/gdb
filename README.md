@@ -98,3 +98,52 @@ break 10
 ```
 
 
+
+### How to get know the all set breakpoints?
+```c
+info breakpoints
+```
+### How to delete breakpoint?
+after doing info breakpoints you can see the Num column, so select the one you want to delete
+for example
+```c
+delete 2
+```
+if you want to delete all breakpoints:
+```c
+delete
+```
+
+### Also you can set a breakpoint for (function name, file name , line number)
+```c
+b functionName
+b file1.cpp:functionName // file name + function name  
+b file1.cpp:25           // file name + line number 
+b 20                     // line number  
+```
+### Also we can add conditional breakpoint like the following:
+assume we have the following code
+```c
+
+void print_message(const char *message) {
+    printf("Message: %s\n", message);
+}
+int main() {
+    printf("Hello, World!\n");
+    
+    int i;
+    for(i = 0; i < 10; i++) {
+        print_message("Inside the loop\n");
+    }
+    return 0;
+}
+```
+we want to add break point when i is equal to 5
+```c
+//b linNUmber if i==5 
+b 20 if i==5
+```
+### If you want to print all local variables 
+```c
+info locals
+```
