@@ -20,4 +20,16 @@ int main() {
 ## 2. compile with debugging symbols 
 
 --- 
+```c
 gcc test_main.c -g -o main.out
+```
+## 3. start gdb
+
+```c
+gdb ./main.out
+```
+## 4. View the source code in TUI Mode(terminal user interface)
+inside gdb press 
+```c
+ctr + x then a
+```
