@@ -11,9 +11,15 @@ This guide demonstrates how to create a simple C program with a **segmentation f
 #include <stdio.h>
 
 int main() {
-    int *ptr = NULL;   // NULL pointer
-    *ptr = 10;         // Causes segmentation fault
-    printf("Value: %d\n", *ptr);
+    printf("Hello, World!\n");
+    int x = 10;
+    int y = 20;
+    int z = x + y;
+    printf("The sum of %d and %d is %d\n", x, y, z);
+
+    int *ptr;
+    *ptr=10; // This will likely cause a segmentation fault
+    printf("Value at ptr: %d\n", *ptr);
     return 0;
 }
 ```
@@ -36,7 +42,7 @@ ctr + x then a
 This enables TUI (Text User Interface) mode, which shows the source code and allows navigation.
 
 ## 5. start debugging 
-Run the program from the beginning by writing :
+Start the program from the beginning by writing :
 ```c
 start 
 ```
@@ -44,3 +50,42 @@ Step through the code line by line:
 ```c
 n
 ```
+printing variable value for example x:
+```c
+p x
+```
+also you can run the code by the following:
+```c
+run
+```
+or just type
+```c
+r
+```
+### Lets see more gdb comands (step, refresh, c, finish, bt, quit, & etc)
+inside the TUI if you see the code not organised write the following:
+```c
+refresh
+```
+if you want to step into a function write the following:
+```c
+s
+```
+or
+```c
+step
+```
+if you want to exit the current function:
+```c
+finish
+```
+if you want to make the program to continue:
+```c
+c
+```
+if you want to exit the gdb session:
+```c
+quit
+```
+
+
