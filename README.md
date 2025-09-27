@@ -62,7 +62,7 @@ or just type
 ```c
 r
 ```
-### Lets see more gdb comands (step, refresh, c, finish, bt, quit, & etc)
+### Lets see more gdb comands (step, refresh, c, finish, bt, quit, b or break & etc)
 inside the TUI if you see the code not organised write the following:
 ```c
 refresh
@@ -86,6 +86,15 @@ c
 if you want to exit the gdb session:
 ```c
 quit
+```
+if you want to add breakpoint:
+```c
+b lineNUmber
+example >> b 10
+```
+or
+```c
+break 10
 ```
 
 
