@@ -147,3 +147,89 @@ b 20 if i==5
 ```c
 info locals
 ```
+### watch command
+if you want to make a breakpoint at a specific variable only when its value was changed: 
+```c
+watch x     // puts harware breakpoint 
+```
+also you can make it under condition like the following:
+```c
+watch x==3  // put breakpoint if x value = to 3 
+```
+
+### display command 
+if you want to display any variable value with every time you run any command:
+```c
+display x
+display y
+```
+to see the all display variables:
+```c
+info display    // here you will see the all display variables and an ID for each
+```
+if you want to make undisplay for a specfic variable:
+```c
+undisplay 2     // 2 is the variable ID 
+```
+### How i can overwrite vraiable value?
+
+```c
+set var x=20        // set x to 20 
+```
+if x inside class or struct
+```c
+set var obj.x=50        // obj is an object from a class 
+```
+### calling function through gdb commands
+assume function prototype is sum(x,y):
+```c
+call sum(5,6)   // it should execute the function  
+```
+### if you need to know the type of a variable or object
+
+```c
+ptype x         // vraiable name
+ptype sum()     // function name 
+```
+or use the following
+```c
+whatis sum()
+```
+### if you need to see the code of a specific function
+
+```c
+list print_hello()
+list Data::HelloWorld()     // if HelloWorld is a method from Data 
+```
+### if you want to show the assembly code for the source code or even for a specific function
+
+```c
+disassemble /s               // will print the whole assembly code
+disassemble /s print_hello  // will print assembly code for only print_hello function 
+```
+ 
+ ### How to use backtrace command (bt)
+ after program being crashed do the following:
+ ```c
+ bt
+ ```
+ or
+ ```c
+ backtrace
+ ```
+ then keep press enter to present the whole frames 
+ if you want to present the code for any frame just do the following:
+ ```c
+ frame 1        // 1 is the frame number could be any number
+ ```
+ ### if you want to show the registers info 
+
+ ```c
+ info registers
+ ```
+ ### if you want to present the value of stack pointer (for example) rsp
+
+ ```c
+ x/32w $rsp     // 32w means 32 word you can type>>  help x/ to see the all format 
+ ```
+ 
