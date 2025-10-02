@@ -232,4 +232,84 @@ disassemble /s print_hello  // will print assembly code for only print_hello fun
  ```c
  x/32w $rsp     // 32w means 32 word you can type>>  help x/ to see the all format 
  ```
- 
+ also if you want to present the output in hexadecimal format
+ ```c
+ x/32wx $rsp
+ ```
+ ### How to attach a running process with its PID?
+ first you have to get the process PID 
+ ```c
+ ps aux | grep processName  // for example test.out or WPEWebProcess
+ ```
+ then you can attach the process by two ways >> the firs 
+ ```c
+ gdb
+ attach PID
+ ```
+ or
+ ```c
+ gdb -p PID
+ ```
+ after attaching the PID you can run
+ ```c
+ bt
+ ```
+ to see the running frames and you can go to specific frame through the following
+ ```c
+ frame FrameNumber  // frame 3 ,, 3 here for frame 3 you can find the frame number after running bt command 
+ ```
+then you can see the source code by pressing Ctrl + x then a (if the lib was built by using the -g )
+
+### How to open gdb-server ?
+1 - open gdbserver with specific port on the target machine 
+```c
+gdbserver :1234 --attach <PID>
+```
+
+## What is gdb-multiarch?
+
+It’s a version of GDB that supports cross-debugging for multiple architectures (ARM, MIPS, RISC-V, etc.) from your PC.
+
+You’ll need it if you want to connect to a gdbserver that’s running code built for another CPU (like ARM firmware on a router, Raspberry Pi, etc.).
+
+🔹 Install gdb-multiarch on Ubuntu/Debian
+```c
+sudo apt update
+sudo apt install gdb-multiarch
+```
+2 - so on the host machine run the following 
+```c
+gdb-multiarch
+target remote IP:PORT   // target remote 192.168.8.122:1234
+```
+
+you can do the same on the localhost through the following
+1 - open terminal and write
+```c
+gdbserver localhost:1234 test.out       // test.out is an executable file
+```
+2 - open another terminal and write
+```c
+gdb test.out
+target remote localhost:1234
+```
+
+# How to create gdb file and commands?
+1 - create a file without file extension for example (gdbcommands)
+```c
+define testcommand
+	target remote localhost:1234
+	b main
+	c
+end
+```
+2 - run the following
+```c
+gdb thread.out -x gdbcommands   // -x to tell gdb that you will run the commands inside gdbcommands file
+testcommand                     // here you tell gdb start running the commands, you can delete (define testcommand) then the commands will be run directly after entered to the gdb terminal 
+```
+Note: if you forget to pass the gdbcommands file at the beginning you can source it inside gdb terminal as the following
+```c
+source gdbcommands
+```
+
