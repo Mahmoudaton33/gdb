@@ -241,7 +241,7 @@ disassemble /s print_hello  // will print assembly code for only print_hello fun
  ```c
  ps aux | grep processName  // for example test.out or WPEWebProcess
  ```
- then you can attach the process by two ways >> the firs 
+ then you can attach the process by two ways >> the firs. 
  ```c
  gdb
  attach PID
@@ -250,18 +250,18 @@ disassemble /s print_hello  // will print assembly code for only print_hello fun
  ```c
  gdb -p PID
  ```
- after attaching the PID you can run
+ after attaching the PID you can run.
  ```c
  bt
  ```
- to see the running frames and you can go to specific frame through the following
+ to see the running frames and you can go to specific frame through the following.
  ```c
  frame FrameNumber  // frame 3 ,, 3 here for frame 3 you can find the frame number after running bt command 
  ```
-then you can see the source code by pressing Ctrl + x then a (if the lib was built by using the -g )
+then you can see the source code by pressing Ctrl + x then a (if the lib was built by using the -g ).
 
 ### How to open gdb-server ?
-1 - open gdbserver with specific port on the target machine 
+1 - open gdbserver with specific port on the target machine. 
 ```c
 gdbserver :1234 --attach <PID>
 ```
@@ -272,30 +272,30 @@ It’s a version of GDB that supports cross-debugging for multiple architectures
 
 You’ll need it if you want to connect to a gdbserver that’s running code built for another CPU (like ARM firmware on a router, Raspberry Pi, etc.).
 
-🔹 Install gdb-multiarch on Ubuntu/Debian
+🔹 Install gdb-multiarch on Ubuntu/Debian.
 ```c
 sudo apt update
 sudo apt install gdb-multiarch
 ```
-2 - so on the host machine run the following 
+2 - so on the host machine run the following. 
 ```c
 gdb-multiarch
 target remote IP:PORT   // target remote 192.168.8.122:1234
 ```
 
-you can do the same on the localhost through the following
-1 - open terminal and write
+you can do the same on the localhost through the following.
+1 - open terminal and write.
 ```c
 gdbserver localhost:1234 test.out       // test.out is an executable file
 ```
-2 - open another terminal and write
+2 - open another terminal and write.
 ```c
 gdb test.out
 target remote localhost:1234
 ```
 
 # How to create gdb file and commands?
-1 - create a file without file extension for example (gdbcommands)
+1 - create a file without file extension for example (gdbcommands).
 ```c
 define testcommand
 	target remote localhost:1234
@@ -303,13 +303,123 @@ define testcommand
 	c
 end
 ```
-2 - run the following
+2 - run the following.
 ```c
 gdb thread.out -x gdbcommands   // -x to tell gdb that you will run the commands inside gdbcommands file
 testcommand                     // here you tell gdb start running the commands, you can delete (define testcommand) then the commands will be run directly after entered to the gdb terminal 
 ```
-Note: if you forget to pass the gdbcommands file at the beginning you can source it inside gdb terminal as the following
+Note: if you forget to pass the gdbcommands file at the beginning you can source it inside gdb terminal as the following.
 ```c
 source gdbcommands
 ```
 
+### Very good practice point 
+if you have an issue randomly happened and you want to catch it.
+1 - run gdb. 
+2 - put breakepoint at the exit function (the function that alwayes being run after code being crashed and before process get finished) every c or c++ programm has exit function.
+3 - using the breakpoint number assume it 2, run the following.
+```c
+commands 2
+run         // you can type any command for example info registers & you can write any number of commands you want 
+end         // you should write this command at the end of the commands 
+```
+4 - after that run.
+```c
+c       // for continue 
+```
+## Write shell commands inside the gdb terminal
+
+inside the gdb terminal you can the following.
+```c
+shell ls                // shell then any command
+pipe p x | grep size    // also after pipe you can write what you want
+| p x | grep size 
+! ls
+```
+also you can modify the code and compile it again from the gdb terminal no need to exit from the gdb terminal.
+```c
+shell g++ -g thread.cpp -o thread.out
+run 
+```
+## print the PID from the gdb terminal 
+
+```c 
+python
+import os
+print(os.getpid())
+end
+```
+or
+```c
+shell ps -aux | grep gdb
+```
+## How i can set a breakpoints at every function in the source code?
+
+```c
+rbreak thread.cpp       // recurseve breakpoint 
+```
+if you want to save the output inside logfile do the following:
+```c
+set logging file ./test.log
+set logging on
+```
+
+### CoreDump files 
+1 - first you have to check the coredump limitation through the following:
+```c
+ulimit -a
+ulimit -c unlimited
+```
+make sure that your target was set coredump file to unlimited.
+2 - how i can get the path of the coredump files?
+```c
+cat /proc/sys/kernel/core_pattern
+```
+3 - how i can use the codedump file?
+```c
+gdb WPEWebProcess
+core PATH/TO/coredump/file
+```
+
+### the differences between (thread apply all bt) and (bt)
+bt (short for backtrace)
+
+Shows the call stack (stack frames) of the current thread only.
+
+Useful if:
+
+Your program is single-threaded.
+
+Or you’re only interested in the thread where execution stopped (e.g. at a breakpoint or crash).
+```c
+(gdb) bt
+#0  foo() at test.cpp:10
+#1  bar() at test.cpp:5
+#2  main() at test.cpp:15
+```
+This means the current thread is inside foo(), called from bar(), called from main().
+
+thread apply all bt
+
+Runs bt for all threads in the program, not just the current one.
+
+You get a backtrace per thread, labeled with its thread ID and system ID.
+
+Essential when debugging multi-threaded programs (e.g. C++11 threads, pthreads, OpenMP, etc.), because the crash might not be in the thread you’re currently stopped in.
+```c
+(gdb) thread apply all bt
+
+Thread 3 (Thread 0x7ffff7fc7700 (LWP 1235)):
+#0  __pthread_mutex_lock (mutex=0x5555557570) at pthread_mutex_lock.c:67
+#1  worker_thread() at worker.cpp:42
+#2  ...
+
+Thread 2 (Thread 0x7ffff7fc6700 (LWP 1234)):
+#0  sleep () at ../sysdeps/unix/syscall-template.S:84
+#1  logger_thread() at logger.cpp:20
+#2  ...
+
+Thread 1 (Thread 0x7ffff7fc5700 (LWP 1233)):
+#0  main() at main.cpp:15
+```
+Here you see all threads’ stacks at once — very helpful when one thread is deadlocked, waiting, or crashed while others are still running.
